@@ -21,4 +21,4 @@ jobs:
       - name: push image
         run: |
               docker login -u khevi -p ${{secrets.REGISTRY_PASS}}
-              docker push khevi/my-resume-from-desktop:vi.1
+              docker push khevi/my-resume-from-desktop:v1.1
