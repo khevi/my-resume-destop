@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+
+jobs:
+  
+  build:
+    
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build imsgr
+        run: docker build -t khevi/my-resume-from-desktop:v1.1 .
+
+      
+      - name: push image
+        run: |
+              docker login -u khevi -p ${{secrets.REGISTRY_PASS}}
+              docker push khevi/my-resume-from-desktop
