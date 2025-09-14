@@ -15,10 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build imsgr
-        run: docker build -t khevi/my-resume-from-desktop:v1.1 .
-
+        run: |
+              docker build -t khevi/my-resume-from-desktop:${{github.run_number}} .
+              docker build -t khevi/my-resume-from-desktop .
       
       - name: push image
         run: |
               docker login -u khevi -p ${{secrets.REGISTRY_PASS}}
-              docker push khevi/my-resume-from-desktop:v1.1
+              docker push khevi/my-resume-from-desktop:${{github.run_number}}
+              docker push khevi/my-resume-from-desktop
