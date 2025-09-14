@@ -6,21 +6,35 @@ on:
   pull_request:
     branches: [ "main" ]
 
-
 jobs:
-  
   build:
-    
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build imsgr
+
+      - name: Build Docker images
         run: |
-              docker build -t khevi/my-resume-from-desktop:${{github.run_number}} .
-              docker build -t khevi/my-resume-from-desktop .
-      
-      - name: push image
+          docker build -t khevi/my-resume-from-desktop:${{ github.run_number }} .
+          docker build -t khevi/my-resume-from-desktop .
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.REGISTRY_PASS }}" | docker login -u khevi --password-stdin
+
+      - name: Push Docker images
         run: |
-              docker login -u khevi -p ${{secrets.REGISTRY_PASS}}
-              docker push khevi/my-resume-from-desktop:${{github.run_number}}
-              docker push khevi/my-resume-from-desktop
+          docker push khevi/my-resume-from-desktop:${{ github.run_number }}
+          docker push khevi/my-resume-from-desktop
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run container from built image
+        run: |
+          docker run -d --name resume -p 8080:5001 khevi/my-resume-from-desktop:${{ github.run_number }}
+          sleep 10
+          docker ps
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f resume || true
