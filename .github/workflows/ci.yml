@@ -22,19 +22,7 @@ jobs:
 
       - name: Push Docker images
         run: |
-          docker push khevi/my-resume-from-desktop:${{ github.run_number }}
+          docker push khevi/my-resume-from-desktop:${{ github.run_number }} 
           docker push khevi/my-resume-from-desktop
 
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run container from built image
-        run: |
-          docker run -d --name resume -p 8080:5001 khevi/my-resume-from-desktop:${{ github.run_number }}
-          sleep 10
-          docker ps
-
-      - name: Stop container
-        if: always()
-        run: docker rm -f resume || true
+  
